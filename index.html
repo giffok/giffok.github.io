@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кликер-игра</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        header {
+            background-color: #f0f0f0;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px;
+        }
+        .column {
+            width: 32%;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 5px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #ddd;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>Кликер-игра</header>
+    <div class="container">
+        <div class="column" id="resourcesColumn">
+            <h2>Ресурсы</h2>
+            <table id="resourcesTable">
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Тип</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div class="column" id="recipesColumn">
+            <h2>Рецепты</h2>
+            <table id="recipesTable">
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Ингредиенты</th>
+                        <th>Здание</th>
+                        <th>Скорость</th>
+                        <th>Технология</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div class="column" id="technologiesColumn">
+            <h2>Технологии</h2>
+            <table id="technologiesTable">
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Стоимость</th>
+                        <th>Требования</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        fetch('https://pastebin.com/raw/hhUF2uvM')
+            .then(response => response.json())
+            .then(data => {
+                const resourcesTable = document.getElementById('resourcesTable').getElementsByTagName('tbody')[0];
+                data.resources.forEach(resource => {
+                    const newRow = resourcesTable.insertRow();
+                    newRow.insertCell().innerText = resource.name;
+                    newRow.insertCell().innerText = resource.type;
+                });
+				
+				const recipesTable = document.getElementById('recipesTable').getElementsByTagName('tbody')[0];
+                data.recipes.forEach(recipe => {
+                    const newRow = recipesTable.insertRow();
+                    newRow.insertCell().innerText = recipe.name;
+                    newRow.insertCell().innerText = recipe.ingredients.map(ingredient => `${ingredient.resource} (${ingredient.quantity})`).join(', ');
+                    newRow.insertCell().innerText = recipe.building_type;
+                    newRow.insertCell().innerText = recipe.production_speed;
+                    newRow.insertCell().innerText = recipe.technology_required;
+                });
+
+                const technologiesTable = document.getElementById('technologiesTable').getElementsByTagName('tbody')[0];
+                data.technologies.forEach(technology => {
+                    const newRow = technologiesTable.insertRow();
+                    newRow.insertCell().innerText = technology.name;
+                    newRow.insertCell().innerText = Object.entries(technology.cost).map(([resource, cost]) => `${resource} (${cost})`).join(', ');
+                    newRow.insertCell().innerText = technology.prerequisites.join(', ') || 'Нет';
+                });
+            })
+            .catch(error => {
+                console.error('Ошибка загрузки данных:', error);
+            });
+    </script>
+</body>
+</html>
+
